@@ -1,5 +1,12 @@
 # MLP para classificação de diabetes
 
+Projeto didático em PyTorch para treinar uma MLP sobre o dataset de diabetes.
+Toda a implementação está em `mlp_classificacao.ipynb`.
+
+O notebook prioriza código explícito: funções pequenas, variáveis
+intermediárias, estruturas com atributos nomeados e uma responsabilidade por
+função.
+
 ## Instalação
 
 No PowerShell, crie e ative o ambiente virtual:
@@ -8,27 +15,96 @@ No PowerShell, crie e ative o ambiente virtual:
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-pip install -r requirements-cuda.txt # RTX 3050 / CUDA 13.0
+pip install -r requirements-cuda.txt
 ```
 
-Para uma máquina sem GPU, substitua a última linha por
-`pip install -r requirements-cpu.txt`. O código escolhe CUDA automaticamente
-quando disponível, mas `MLP_DEVICE=cpu` força o fallback para testes.
+Em uma máquina sem GPU, use `requirements-cpu.txt` no último comando. O
+notebook seleciona CUDA automaticamente quando ela está disponível e usa CPU
+como fallback.
+
+## Organização do notebook
+
+As células devem ser executadas em ordem. Elas estão divididas em:
+
+1. configuração;
+2. ambiente e reprodutibilidade;
+3. leitura e divisão dos dados;
+4. pré-processamento;
+5. modelo;
+6. treinamento;
+7. avaliação;
+8. artefatos;
+9. inferência;
+10. orquestração;
+11. configuração da execução;
+12. execução do experimento;
+13. validações opcionais.
+
+Cada seção apresenta primeiro sua finalidade e depois as classes e funções
+correspondentes. Não é necessário importar código do projeto a partir de
+outro arquivo.
 
 ## Execução
 
-Abra [mlp_classificacao.ipynb](mlp_classificacao.ipynb) no VS Code ou Jupyter
-e execute as células na ordem apresentada. O notebook é a única fonte de
-código do projeto.
+Abra `mlp_classificacao.ipynb` no VS Code ou Jupyter e execute as células na
+ordem apresentada.
 
-Use a célula `run_experiment()` para o treino completo, ou execute a chamada
-curta abaixo na própria célula para uma validação rápida:
+A configuração de inspeção usa 3.000 linhas e 3 épocas:
 
 ```python
-run_experiment(device_override='cuda', max_rows=3000, epochs=3)
+config.maximum_rows = 3000
+config.epochs = 3
 ```
 
-As funções `verify_reproducibility()` e `verify_cuda()` fazem, respectivamente,
-a verificação CPU determinística e o teste real de CUDA. Os artefatos —
-checkpoint, pré-processador, métricas, relatório e gráficos — são salvos em
-`artifacts/`.
+Para o treino completo:
+
+```python
+config.maximum_rows = None
+config.epochs = 30
+```
+
+O dispositivo pode ser fixado antes da execução:
+
+```python
+config.requested_device = "cpu"
+```
+
+ou:
+
+```python
+config.requested_device = "cuda"
+```
+
+Quando `requested_device` é `None`, CUDA é usada quando estiver disponível.
+
+## Artefatos
+
+Cada execução gera:
+
+- `best_model.pt`;
+- `preprocessor.joblib`;
+- `test_metrics.json`;
+- `classification_report.txt`;
+- `confusion_matrix.png`;
+- `learning_curves.png`;
+- `history.json`;
+- `imbalance_report.txt`;
+- `metadata.json`.
+
+O modelo e o pré-processador podem ser recarregados para inferência sem novo
+treinamento.
+
+## Validações
+
+O final do notebook oferece duas chamadas opcionais:
+
+```python
+verify_reproducibility(PROJECT_ROOT, maximum_rows=3000, epochs=3)
+verify_cuda(PROJECT_ROOT, maximum_rows=3000, epochs=3)
+```
+
+A primeira compara duas execuções determinísticas em CPU. A segunda executa
+o fluxo em CUDA e informa claramente quando não existe GPU compatível.
+
+O desenho das funções e os critérios de conclusão estão descritos em
+`docs/plano_refatoracao.md`.
