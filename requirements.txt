@@ -1,0 +1,10 @@
+# Core dependencies (install inside .venv with: pip install -r requirements.txt)
+numpy>=1.26,<3
+pandas>=2.2,<4
+scikit-learn>=1.5,<2
+matplotlib>=3.8,<4
+seaborn>=0.13,<1
+
+# Install PyTorch separately with either requirements-cuda.txt (recommended
+# for this RTX 3050 / CUDA 13.0 machine) or requirements-cpu.txt. This keeps
+# CPU fallback available without accidentally replacing a CUDA build from PyPI.
