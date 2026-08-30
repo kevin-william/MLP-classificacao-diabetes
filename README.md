@@ -49,11 +49,11 @@ outro arquivo.
 Abra `mlp_classificacao.ipynb` no VS Code ou Jupyter e execute as células na
 ordem apresentada.
 
-A configuração de inspeção usa 3.000 linhas e 3 épocas:
+A configuração inicial usa 3.000 linhas e 30 épocas:
 
 ```python
 config.maximum_rows = 3000
-config.epochs = 3
+config.epochs = 30
 ```
 
 Para o treino completo:
@@ -99,8 +99,8 @@ treinamento.
 O final do notebook oferece duas chamadas opcionais:
 
 ```python
-verify_reproducibility(PROJECT_ROOT, maximum_rows=3000, epochs=3)
-verify_cuda(PROJECT_ROOT, maximum_rows=3000, epochs=3)
+verify_reproducibility(PROJECT_ROOT, maximum_rows=3000, epochs=30)
+verify_cuda(PROJECT_ROOT, maximum_rows=3000, epochs=30)
 ```
 
 A primeira compara duas execuções determinísticas em CPU. A segunda executa
