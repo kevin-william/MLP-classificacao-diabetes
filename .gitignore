@@ -7,3 +7,6 @@ build/
 dist/
 artifacts/*
 !artifacts/.gitkeep
+artifacts/_studies/
+docs/
+docs/*
