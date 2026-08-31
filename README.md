@@ -62,9 +62,11 @@ config.artifacts_directory = PROJECT_ROOT / "artifacts" / "f2_full_dataset"
 ```
 
 O early stopping só pode encerrar depois da época 30. Pesos de classe são
-calculados a partir dos rótulos de treino. A validação escolhe o limiar da
-classe positiva entre 0,05 e 0,95 pelo maior F2; o teste e a inferência usam o
-limiar salvo no checkpoint.
+calculados a partir dos rótulos de treino como `pos_weight`. A MLP tem a
+arquitetura `Entrada → 32 → 16 → 1`: sua saída única é um logit, convertido em
+probabilidade positiva por `sigmoid` apenas na validação, teste e inferência.
+A validação escolhe o limiar da classe positiva pelo maior F2; o teste e a
+inferência usam o limiar salvo no checkpoint.
 
 O dispositivo pode ser fixado antes da execução:
 
