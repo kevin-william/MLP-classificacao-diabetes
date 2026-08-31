@@ -36,9 +36,11 @@ As células devem ser executadas em ordem. Elas estão divididas em:
 8. artefatos;
 9. inferência;
 10. orquestração;
-11. configuração da execução;
-12. execução do experimento;
-13. validações opcionais.
+11. verificações automáticas;
+12. estratégia de seleção por F2;
+13. configuração da execução;
+14. execução do experimento;
+15. validações opcionais.
 
 Cada seção apresenta primeiro sua finalidade e depois as classes e funções
 correspondentes. Não é necessário importar código do projeto a partir de
@@ -49,19 +51,20 @@ outro arquivo.
 Abra `mlp_classificacao.ipynb` no VS Code ou Jupyter e execute as células na
 ordem apresentada.
 
-A configuração inicial usa 3.000 linhas e 30 épocas:
-
-```python
-config.maximum_rows = 3000
-config.epochs = 30
-```
-
-Para o treino completo:
+A configuração da execução final usa o dataset completo e até 200 épocas:
 
 ```python
 config.maximum_rows = None
-config.epochs = 30
+config.epochs = 200
+config.minimum_epochs = 30
+config.use_class_weights = True
+config.artifacts_directory = PROJECT_ROOT / "artifacts" / "f2_full_dataset"
 ```
+
+O early stopping só pode encerrar depois da época 30. Pesos de classe são
+calculados a partir dos rótulos de treino. A validação escolhe o limiar da
+classe positiva entre 0,05 e 0,95 pelo maior F2; o teste e a inferência usam o
+limiar salvo no checkpoint.
 
 O dispositivo pode ser fixado antes da execução:
 
@@ -84,6 +87,7 @@ Cada execução gera:
 - `best_model.pt`;
 - `preprocessor.joblib`;
 - `test_metrics.json`;
+- `threshold_selection.json`;
 - `classification_report.txt`;
 - `confusion_matrix.png`;
 - `learning_curves.png`;
