@@ -37,7 +37,7 @@ As células devem ser executadas em ordem. Elas estão divididas em:
 9. inferência;
 10. orquestração;
 11. verificações automáticas;
-12. estratégia de seleção por F2;
+12. estudo de seleção por F1 positivo;
 13. configuração da execução;
 14. execução do experimento;
 15. validações opcionais.
@@ -57,16 +57,24 @@ A configuração da execução final usa o dataset completo e até 200 épocas:
 config.maximum_rows = None
 config.epochs = 200
 config.minimum_epochs = 30
-config.use_class_weights = True
-config.artifacts_directory = PROJECT_ROOT / "artifacts" / "f2_full_dataset"
+config.positive_weight_multiplier = 1.0
+config.artifacts_directory = PROJECT_ROOT / "artifacts" / "f1_full_dataset"
 ```
 
 O early stopping só pode encerrar depois da época 30. Pesos de classe são
 calculados a partir dos rótulos de treino como `pos_weight`. A MLP tem a
 arquitetura `Entrada → 32 → 16 → 1`: sua saída única é um logit, convertido em
 probabilidade positiva por `sigmoid` apenas na validação, teste e inferência.
-A validação escolhe o limiar da classe positiva pelo maior F2; o teste e a
+A validação escolhe o limiar da classe positiva pelo maior F1 positivo na faixa
+de `0,05` a `0,95`, com passo `0,01`; o teste e a
 inferência usam o limiar salvo no checkpoint.
+
+O estudo reproduzível avalia os multiplicadores `0`, `0,25`, `0,50`, `0,75` e
+`1,00`. O valor `0` desativa pesos; valores positivos aplicam o multiplicador
+à razão entre negativos e positivos exclusivamente do treino. Apenas o
+vencedor por F1 positivo de validação é avaliado no teste. Os candidatos ficam
+em `artifacts/_studies/` e o vencedor é promovido para
+`artifacts/f1_full_dataset/`.
 
 O dispositivo pode ser fixado antes da execução:
 
@@ -113,4 +121,4 @@ A primeira compara duas execuções determinísticas em CPU. A segunda executa
 o fluxo em CUDA e informa claramente quando não existe GPU compatível.
 
 O desenho das funções e os critérios de conclusão estão descritos em
-`docs/plano_refatoracao.md`.
+`docs/plano inicial/plano_refatoracao.md`.
